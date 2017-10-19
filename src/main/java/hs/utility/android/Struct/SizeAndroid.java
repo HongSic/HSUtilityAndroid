@@ -3,7 +3,7 @@ package hs.utility.android.Struct;
 import android.content.Context;
 import android.graphics.Rect;
 
-import kr.arumnarae.finder.Libs.HSUtillity.Structs.Size;
+import hs.utility.Struct.Size;
 
 /**
  * Created by 조장찡 on 2016-10-15.

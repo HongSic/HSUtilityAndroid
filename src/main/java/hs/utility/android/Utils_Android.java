@@ -17,6 +17,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -26,16 +27,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileDescriptor;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
-import kr.arumnarae.finder.Libs.HSUtilityAndroid.Struct.SizeAndroid;
-import kr.arumnarae.finder.Libs.HSUtillity.Class.HSInputStream;
-import kr.arumnarae.finder.Libs.HSUtillity.Utils;
+import hs.utility.Utils;
+import hs.utility.android.Struct.SizeAndroid;
 
 /**
  * Created by ParkHongSic on 2016-09-18.

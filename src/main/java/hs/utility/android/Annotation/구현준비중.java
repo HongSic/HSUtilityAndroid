@@ -1,4 +1,4 @@
-package kr.arumnarae.finder.Libs.HSUtilityAndroid.Annotation;
+package hs.utility.android.Annotation;
 
 /**
  * Created by gpo04 on 2017-09-21.

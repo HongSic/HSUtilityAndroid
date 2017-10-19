@@ -1,9 +1,9 @@
-package khs.utility.android.Struct;
+package hs.utility.android.Struct;
 
 import android.content.Context;
 import android.graphics.RectF;
 
-import kr.arumnarae.finder.Libs.HSUtillity.Structs.SizeF;
+import hs.utility.Struct.SizeF;
 
 /**
  * Created by 조장찡 on 2016-10-15.
