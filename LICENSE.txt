@@ -1,4 +1,4 @@
-package hs.utility.android.*;
+﻿package hs.utility.android.*;
 
 이 소스파일에있는 저작권은 @Auther 가 명시되어 있지 않거나 ParkHongSic 이면 제가 모든 권리를 보유하고 있습니다.
 여기 파일들을 수정시 소스 공개를 해주시기 바랍니다.
