@@ -1,28 +1,38 @@
-package hs.utility.android;
+package kr.arumnarae.finder.Libs.HSUtilityAndroid;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.security.MessageDigest;
 import java.util.ArrayList;
 
-import hs.utility.android.Struct.SizeAndroid;
-import hs.utility.Utils;
+import kr.arumnarae.finder.Libs.HSUtilityAndroid.Struct.SizeAndroid;
+import kr.arumnarae.finder.Libs.HSUtillity.Utils;
 
 /**
  * Created by ParkHongSic on 2016-09-18.
+ * @author 박홍식 (ParkHongSic, 조장찡, gpo04174, HSKernel)
  */
 public class Utils_Android extends Utils {
 
@@ -31,25 +41,25 @@ public class Utils_Android extends Utils {
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
         {
             Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-            return new SizeAndroid(display.getWidth(), display.getHeight());
+            return new SizeAndroid(activity, display.getWidth(), display.getHeight());
         }
         else
         {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            return new SizeAndroid(displayMetrics.widthPixels, displayMetrics.heightPixels);
+            return new SizeAndroid(activity, displayMetrics.widthPixels, displayMetrics.heightPixels);
         }
     }
     //http://androi.tistory.com/143 참고
     public static SizeAndroid getResolution(Context context)
     {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return new SizeAndroid(metrics.widthPixels, metrics.heightPixels);
+        return new SizeAndroid(context, metrics.widthPixels, metrics.heightPixels);
     }
     public static SizeAndroid getResolutionDP(Context context)
     {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        return new SizeAndroid(getPixelToDp(context, metrics.widthPixels), getPixelToDp(context, metrics.heightPixels), SizeAndroid.MeasureUnit.DP);
+        return new SizeAndroid(context, getPixelToDp(context, metrics.widthPixels), getPixelToDp(context, metrics.heightPixels), SizeAndroid.MeasureUnit.DP);
     }
 
 
@@ -97,12 +107,14 @@ public class Utils_Android extends Utils {
     {
         return TextCut(tv, Value, Width, Zoom);
     }
-    public static String TextCut(TextView tv, String Value, int Width, float Zoom)
+
     /**
      텍스트를 길이에 맞게 자른다음 자른 줄들을 반환합니다.
      @param tv 적용이되는 라벨 입니다.
      @param Value 텍스트 입니다.
-     @param Width 최대 가로 길이 입니다.*/
+     @param Width 최대 가로 길이 입니다.
+     @param Zoom 확대 배율 입니다.*/
+    public static String TextCut(TextView tv, String Value, int Width, float Zoom)
     {
         if (Width == 0) return Value;
 
@@ -156,7 +168,7 @@ public class Utils_Android extends Utils {
     {
         if (Width == 0) return Value;
 
-        SizeAndroid sf = new SizeAndroid();
+        SizeAndroid sf = new SizeAndroid(tv.getContext());
         String text = Value;
 
         String tmp = "...";
@@ -209,7 +221,7 @@ public class Utils_Android extends Utils {
         if (Width == 0) return new String[]{Value};
         int diff = Math.abs(Width);
         int len = 10;
-        SizeAndroid sf = new SizeAndroid();
+        SizeAndroid sf = new SizeAndroid(tv.getContext());
         String text = Value;
 
         ArrayList<String> list = new ArrayList<>();
@@ -230,7 +242,7 @@ public class Utils_Android extends Utils {
             while(len > 0)
             {
                 len = CUT(Value, paint, Width, null);
-                list.add(len==0?Value: StringUtility.remove(Value, len));
+                list.add(len==0?Value: Utils.StringUtility.remove(Value, len));
                 Value =Value.substring(len);
             }
         }
@@ -331,7 +343,6 @@ public class Utils_Android extends Utils {
 
     public static class ImageUtility
     {
-
         public static Bitmap CropRound(Bitmap scaleBitmapImage, int targetWidth, int targetHeight) {
 
             Bitmap targetBitmap = Bitmap.createBitmap(targetWidth,
@@ -374,6 +385,200 @@ public class Utils_Android extends Utils {
                     new Rect(0, 0, targetWidth,
                             targetHeight), null);
             return targetBitmap;
+        }
+
+
+        public static void setClipboard(Context context, String Text)
+        {
+
+            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB)
+            {
+                android.text.ClipboardManager clipboard = (android.text.ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboard.setText(Text);
+            }
+            else
+            {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", Text);
+                clipboard.setPrimaryClip(clip);
+            }
+        }
+
+
+        public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+            // Raw height and width of image
+            final int height = options.outHeight;
+            final int width = options.outWidth;
+            int inSampleSize = 1;
+
+            if (height > reqHeight || width > reqWidth)
+            {
+                /*
+                final int halfHeight = height / 2;
+                final int halfWidth = width / 2;
+
+                // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+                // height and width larger than the requested height and width.
+                while ((halfHeight / inSampleSize) > reqHeight
+                        && (halfWidth / inSampleSize) > reqWidth) {
+                    inSampleSize *= 2;
+                }*/
+
+                // Calculate ratios of height and width to requested height and width
+                final int heightRatio = Math.round((float) height / (float) reqHeight);
+                final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+                // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            }
+
+            return inSampleSize;
+        }
+
+
+        public static int calculateInSampleSize_Ceil(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+            // Raw height and width of image
+            final int height = options.outHeight;
+            final int width = options.outWidth;
+            int inSampleSize = 1;
+
+            if (height > reqHeight || width > reqWidth)
+            {
+                /*
+                final int halfHeight = height / 2;
+                final int halfWidth = width / 2;
+
+                // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+                // height and width larger than the requested height and width.
+                while ((halfHeight / inSampleSize) > reqHeight
+                        && (halfWidth / inSampleSize) > reqWidth) {
+                    inSampleSize *= 2;
+                }*/
+
+                // Calculate ratios of height and width to requested height and width
+                int heightRatio = (int)Math.ceil((float) height / (float) reqHeight);
+                int widthRatio = (int)Math.ceil((float) width / (float) reqWidth);
+
+                // Choose the smallest ratio as inSampleSize value, this will guarantee
+                // a final image with both dimensions larger than or equal to the
+                // requested height and width.
+                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            }
+
+            return inSampleSize;
+        }
+    }
+
+    public static class EtcUtility
+    {
+        //public static void PermisionRequest()
+
+
+        //Log.d("SHA Key", "Hash: " + getHashKey(getContext()));
+        public static String getAppSHAKey(Context context)
+        {
+            try
+            {
+                PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+                for (Signature sig: info.signatures)
+                {
+                    MessageDigest md = MessageDigest.getInstance("SHA");
+                    md.update(sig.toByteArray());
+                    return Base64.encodeToString(md.digest(), Base64.DEFAULT);
+                }
+            }
+            catch (Exception ex){ex.printStackTrace();}
+            return null;
+        }
+
+        static Toast toast;
+        public static void showToast(final Context context, final String Message, final int Length)
+        {
+            try
+            {
+                if(toast == null)toast = Toast.makeText(context, Message, Length);
+                else
+                {
+                    toast.setDuration(Length);
+                    toast.setText(Message);
+                    //toast.setGravity(Gravity.CENTER, 0, 0);
+                }
+                toast.show();
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+                toast = Toast.makeText(context, Message, Length);
+                toast.show();
+            }
+        }
+        public static void showToastForThread(final Activity activity, final String Message, final int Length)
+        {
+            activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            try
+                            {
+                                if(toast == null)toast = Toast.makeText(activity.getApplicationContext(), Message, Length);
+                                else
+                                {
+                                    toast.setDuration(Length);
+                                    toast.setText(Message);
+                                    //toast.setGravity(Gravity.CENTER, 0, 0);
+                                }
+                                toast.show();
+                            }
+                            catch (Exception ex)
+                            {
+                                ex.printStackTrace();
+                                toast = Toast.makeText(activity.getApplicationContext(), Message, Length);
+                                toast.show();
+                            }
+                        }
+                    } );
+        }
+        public static void showToastForThread(final Activity activity, final int ResStringId, final int Length)
+        {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        if(toast == null)toast = Toast.makeText(activity.getApplicationContext(), ResStringId, Length);
+                        else
+                        {
+                            toast.setDuration(Length);
+                            toast.setText(ResStringId);
+                            //toast.setGravity(Gravity.CENTER, 0, 0);
+                        }
+                        toast.show();
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
+                        toast = Toast.makeText(activity.getApplicationContext(), ResStringId, Length);
+                        toast.show();
+                    }
+                }
+            } );
+        }
+
+        public static PackageInfo getApplicationInfo(@NotNull Context context, @NotNull String PackageName)
+        {
+            PackageInfo pi = null;
+            try
+            {
+                PackageManager pm = context.getPackageManager();
+                pi = pm.getPackageInfo(PackageName,  PackageManager.GET_ACTIVITIES);
+            }
+            catch (PackageManager.NameNotFoundException e) {}
+            catch (Exception ex){ex.printStackTrace();}
+
+            return pi;
         }
     }
 }
