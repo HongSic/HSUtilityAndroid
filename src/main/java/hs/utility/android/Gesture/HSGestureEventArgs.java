@@ -3,7 +3,7 @@ package hs.utility.android.Gesture;
 import java.util.EnumSet;
 import java.util.Set;
 
-import kr.arumnarae.finder.Libs.HSUtillity.Event.HSEventArgs;
+import hs.utility.android.Event.HSEventArgs;
 
 /**
  * Created by ParkHongSic on 2016-09-03.
