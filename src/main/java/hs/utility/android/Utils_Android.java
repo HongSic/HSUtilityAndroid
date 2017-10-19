@@ -347,8 +347,34 @@ public class Utils_Android extends Utils {
         return result<1?result:Value.length() - result;
     }
 
+
     public static class ImageUtility
     {
+        public static Bitmap.CompressFormat getExtCompress(String mimeType)
+        {
+            if( "image/jpg".equals(mimeType) ||
+                    "image/jpeg".equals(mimeType) ||
+                    "image/pjpeg".equals(mimeType) ||
+                    "image/jpeg".equals(mimeType) ||
+                    "image/bmp".equals(mimeType) ||
+                    "image/x-windows-bmp".equals(mimeType))
+                return Bitmap.CompressFormat.JPEG;
+            else if("image/webp".equals(mimeType)) return Bitmap.CompressFormat.WEBP;
+            else return Bitmap.CompressFormat.PNG;
+        }
+        public static String getExt(String mimeType)
+        {
+            if( "image/jpg".equals(mimeType) ||
+                    "image/jpeg".equals(mimeType) ||
+                    "image/pjpeg".equals(mimeType) ||
+                    "image/jpeg".equals(mimeType) ||
+                    "image/bmp".equals(mimeType) ||
+                    "image/x-windows-bmp".equals(mimeType))
+                return "jpg";
+            else if("image/webp".equals(mimeType)) return "webp";
+            else return "png";
+        }
+
         public static Bitmap CropRound(Bitmap scaleBitmapImage, int targetWidth, int targetHeight) {
 
             Bitmap targetBitmap = Bitmap.createBitmap(targetWidth,
@@ -459,7 +485,7 @@ public class Utils_Android extends Utils {
             return inSampleSize;
         }
 
-        public static Bitmap getBitmap(@NotNull Resources res, int id, int Width, int Height)
+        public static Bitmap getBitmap(@NonNull Resources res, int id, int Width, int Height)
         {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_4444;
@@ -469,7 +495,7 @@ public class Utils_Android extends Utils {
             options.inJustDecodeBounds = false;
             return BitmapFactory.decodeResource(res, id, options);
         }
-        public static Bitmap getBitmap(@NotNull File file, int Width, int Height)
+        public static Bitmap getBitmap(@NonNull File file, int Width, int Height)
         {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_4444;
@@ -479,8 +505,8 @@ public class Utils_Android extends Utils {
             options.inJustDecodeBounds = false;
             return BitmapFactory.decodeFile(file.getPath(), options);
         }
-        public static Bitmap getBitmap(@NotNull byte[] array, int Width, int Height){ return getBitmap(array, 0, array.length, Width, Height); }
-        public static Bitmap getBitmap(@NotNull byte[] array, int offset, int length, int Width, int Height)
+        public static Bitmap getBitmap(@NonNull byte[] array, int Width, int Height){ return getBitmap(array, 0, array.length, Width, Height); }
+        public static Bitmap getBitmap(@NonNull byte[] array, int offset, int length, int Width, int Height)
         {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_4444;
@@ -490,7 +516,7 @@ public class Utils_Android extends Utils {
             options.inJustDecodeBounds = false;
             return BitmapFactory.decodeByteArray(array, offset, length, options);
         }
-        public static Bitmap getBitmap(@NotNull FileDescriptor descriptor, int Width, int Height)
+        public static Bitmap getBitmap(@NonNull FileDescriptor descriptor, int Width, int Height)
         {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_4444;
@@ -512,7 +538,7 @@ public class Utils_Android extends Utils {
             if(bitmap == null)return null;
             else return new BitmapDrawable(bitmap);
         }
-        public static Drawable getDrawable(@Nullable Bitmap bitmap, @NotNull Resources res)
+        public static Drawable getDrawable(@Nullable Bitmap bitmap, @NonNull Resources res)
         {
             if(bitmap == null)return null;
             else return new BitmapDrawable(res, bitmap);
@@ -630,7 +656,7 @@ public class Utils_Android extends Utils {
             } );
         }
 
-        public static PackageInfo getApplicationInfo(@NotNull Context context, @NotNull String PackageName)
+        public static PackageInfo getApplicationInfo(@NonNull Context context, @NonNull String PackageName)
         {
             PackageInfo pi = null;
             try
