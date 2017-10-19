@@ -27,11 +27,19 @@ public class HSGestureDetector extends GestureDetector.SimpleOnGestureListener {
         gestureDetector = new GestureDetectorCompat(context, this);
         this.context = context;
     }
-    /*
-    public HSGestureDector(View view)
+    public HSGestureDetector(View view)
     {
-        view.setOnClickListener();
-    }*/
+        gestureDetector = new GestureDetectorCompat(view.getContext(), this);
+        this.context = view.getContext();
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                HSGestureDetector.this.onTouchEvent(event);
+                return true;
+            }
+        });
+    }
+    @Deprecated
     public HSGestureDetector(){}
 
     private int SWIPE_MIN_DISTANCE = 120;
