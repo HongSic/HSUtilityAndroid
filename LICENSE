@@ -1,14 +1,15 @@
-package hs.utility.android.*;
+package hs.utility.*;
 
 이 소스파일에있는 저작권은 @Auther 가 명시되어 있지 않거나 ParkHongSic 이면 제가 모든 권리를 보유하고 있습니다.
 여기 파일들을 수정시 소스 공개를 해주시기 바랍니다.
 
 라이선스는 GNU GENERAL PUBLIC LICENSE v3 를 따릅니다.
 
-GitLab 레포지토리 (Internal project): https://gitlab.com/gpo04174/HSUtilityAndroid
+GitLab 레포지토리 (Internal project): https://gitlab.com/gpo04174/HSUtilityJava
+GitHub 레포지토리: https://github.com/HongSic/HSUtilityJava
 
 메일: gpo04174@naver.com
-
+					
 					
 					GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
