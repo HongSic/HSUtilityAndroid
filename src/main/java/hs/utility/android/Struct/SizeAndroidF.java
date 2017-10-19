@@ -1,4 +1,4 @@
-package kr.arumnarae.finder.Libs.HSUtilityAndroid.Struct;
+package khs.utility.android.Struct;
 
 import android.content.Context;
 import android.graphics.RectF;

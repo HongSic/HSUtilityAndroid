@@ -1,10 +1,11 @@
-package kr.arumnarae.finder.Libs.HSUtilityAndroid;
+package hs.utility.android;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,7 +13,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,10 +28,13 @@ import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.FileDescriptor;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
 import kr.arumnarae.finder.Libs.HSUtilityAndroid.Struct.SizeAndroid;
+import kr.arumnarae.finder.Libs.HSUtillity.Class.HSInputStream;
 import kr.arumnarae.finder.Libs.HSUtillity.Utils;
 
 /**
@@ -388,23 +395,6 @@ public class Utils_Android extends Utils {
         }
 
 
-        public static void setClipboard(Context context, String Text)
-        {
-
-            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB)
-            {
-                android.text.ClipboardManager clipboard = (android.text.ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboard.setText(Text);
-            }
-            else
-            {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", Text);
-                clipboard.setPrimaryClip(clip);
-            }
-        }
-
-
         public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
             // Raw height and width of image
             final int height = options.outHeight;
@@ -469,12 +459,86 @@ public class Utils_Android extends Utils {
 
             return inSampleSize;
         }
+
+        public static Bitmap getBitmap(@NotNull Resources res, int id, int Width, int Height)
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeResource(res, id, options);
+            options.inSampleSize = calculateInSampleSize(options, Width, Height);
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeResource(res, id, options);
+        }
+        public static Bitmap getBitmap(@NotNull File file, int Width, int Height)
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(file.getPath(), options);
+            options.inSampleSize = calculateInSampleSize(options, Width, Height);
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeFile(file.getPath(), options);
+        }
+        public static Bitmap getBitmap(@NotNull byte[] array, int Width, int Height){ return getBitmap(array, 0, array.length, Width, Height); }
+        public static Bitmap getBitmap(@NotNull byte[] array, int offset, int length, int Width, int Height)
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(array, offset, length, options);
+            options.inSampleSize = calculateInSampleSize(options, Width, Height);
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeByteArray(array, offset, length, options);
+        }
+        public static Bitmap getBitmap(@NotNull FileDescriptor descriptor, int Width, int Height)
+        {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFileDescriptor(descriptor, null, options);
+            options.inSampleSize = calculateInSampleSize(options, Width, Height);
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeFileDescriptor(descriptor, null, options);
+        }
+        public static Bitmap getBitmap(@Nullable Drawable drawable)
+        {
+            if(drawable == null)return null;
+            else return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+        @Deprecated
+        public static Drawable getDrawable(@Nullable Bitmap bitmap)
+        {
+            if(bitmap == null)return null;
+            else return new BitmapDrawable(bitmap);
+        }
+        public static Drawable getDrawable(@Nullable Bitmap bitmap, @NotNull Resources res)
+        {
+            if(bitmap == null)return null;
+            else return new BitmapDrawable(res, bitmap);
+        }
     }
 
     public static class EtcUtility
     {
         //public static void PermisionRequest()
 
+        public static void setClipboard(Context context, String Text)
+        {
+
+            if(android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB)
+            {
+                android.text.ClipboardManager clipboard = (android.text.ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboard.setText(Text);
+            }
+            else
+            {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", Text);
+                clipboard.setPrimaryClip(clip);
+            }
+        }
 
         //Log.d("SHA Key", "Hash: " + getHashKey(getContext()));
         public static String getAppSHAKey(Context context)
