@@ -1,7 +1,9 @@
 package hs.utility.android.Extend;
 
 import android.content.Context;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
+//import android.support.v4.app.NotificationCompat;
 
 /**
  * Created by ParkHongSic(조장찡) on 2016-09-23.

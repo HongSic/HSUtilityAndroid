@@ -1,10 +1,12 @@
 package hs.utility.android.Gesture;
 
 import android.content.Context;
-import android.support.v4.view.GestureDetectorCompat;
+//import android.support.v4.view.GestureDetectorCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.core.view.GestureDetectorCompat;
 
 import java.util.EnumSet;
 

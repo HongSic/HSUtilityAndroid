@@ -1,12 +1,13 @@
 package hs.utility.android.Control.Dialog;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import hs.utility.Struct.Size;
 import hs.utility.android.Control.Base.HSDialog;

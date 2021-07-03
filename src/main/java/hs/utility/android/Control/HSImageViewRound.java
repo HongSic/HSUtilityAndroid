@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.*;
-import android.support.annotation.*;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
 
 import hs.utility.android.Control.Base.HSImageView;
 import hs.utility.android.R;

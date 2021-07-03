@@ -16,8 +16,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.annotation.NonNull;
+//import android.support.annotation.Nullable;
+//import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -27,6 +27,9 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -446,7 +449,8 @@ public class Utils_Android extends Utils {
                 // Choose the smallest ratio as inSampleSize value, this will guarantee
                 // a final image with both dimensions larger than or equal to the
                 // requested height and width.
-                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+                inSampleSize = Math.min(heightRatio, widthRatio);
+                //inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
             }
 
             return inSampleSize;
